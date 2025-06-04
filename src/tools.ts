@@ -2,8 +2,8 @@ import { z } from "zod";
 
 // Zod schemas for validation
 const InterestRateRequestSchema = z.object({
-  product: z.enum(['BUDGET']),
-  type: z.enum(['ANNUITAIR']),
+  product: z.enum(['BUDGET', 'WONING']),
+  type: z.enum(['ANNUITAIR', 'LINEAIR', 'AFLOSSINGSVRIJ']),
   discounts: z.array(z.discriminatedUnion('type', [
     z.object({
       type: z.literal('BANK_ACCOUNT')

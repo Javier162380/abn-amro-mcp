@@ -45,8 +45,8 @@ const server = new McpServer({
       "calculate-interest-rate",
       "Calculate mortgage interest rates for ABN AMRO products with various discounts",
       {
-        product: z.enum(['BUDGET']).describe('The mortgage product type'),
-        type: z.enum(['ANNUITAIR']).describe('The mortgage repayment type'),
+        product: z.enum(['BUDGET', 'WONING']).describe('The mortgage product type, by default use the budget account '),
+        type: z.enum(['ANNUITAIR', 'LINEAIR', 'AFLOSSINGSVRIJ']).describe('The mortgage repayment type'),
         discounts: z.array(z.discriminatedUnion('type', [
           z.object({
             type: z.literal('BANK_ACCOUNT')
