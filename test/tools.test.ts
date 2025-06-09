@@ -75,7 +75,7 @@ describe('ABN AMRO Tools', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0].type).toBe('text');
 
-      const responseData = JSON.parse(result.content[0].text);
+      const responseData = JSON.parse(result.content[0].text as string);
       expect(responseData.success).toBe(true);
       expect(responseData.data.bridgingCredit.rate).toBe(3.5);
       expect(responseData.data.periods).toHaveLength(1);
@@ -123,7 +123,7 @@ describe('ABN AMRO Tools', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0].type).toBe('text');
 
-      const responseData = JSON.parse(result.content[0].text);
+      const responseData = JSON.parse(result.content[0].text as string);
       expect(responseData.success).toBe(true);
       expect(responseData.data.maximumMortgage).toBe(280000);
       expect(responseData.data.monthlyPayment).toBe(1250);

@@ -11,6 +11,11 @@ build/
 out/
 *.tsbuildinfo
 
+# TypeScript declaration files and source maps
+*.d.ts
+*.d.ts.map
+*.js.map
+
 # Runtime data
 pids
 *.pid

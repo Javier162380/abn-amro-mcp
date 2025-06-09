@@ -5,7 +5,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import {
   calculateInterestRate,
-  calculateMaximumMortgage
+  calculateMaximumMortgage,
+  getMortageInterestRateDeduction,
+  getMaximumMortageNationalHomeGuarantee,
+  getPropertyTransferTax
 } from "./tools.js";
 
 const server = new McpServer({
@@ -71,6 +74,29 @@ const server = new McpServer({
     },
     calculateMaximumMortgage
   );
+
+  server.tool(
+    "get-mortage-interest-rate-deduction",
+    "Get the maximum tax deduction rate for mortgage interest payments in the Netherlands",
+    {},
+    getMortageInterestRateDeduction,
+  )
+
+  server.tool(
+    "get-maximum-mortage-national-home-guarantee",
+    "Get the maximum mortgage amount for the Dutch National Mortgage Guarantee (NHG) for 2025",
+    {},
+    getMaximumMortageNationalHomeGuarantee,
+  )
+
+  server.tool(
+    "get-property-transfer-tax",
+    "Get the property transfer tax for a property in the Netherlands",
+    {
+      housePrice: z.number().min(0).describe("The price of the property in euros"),
+    },
+    getPropertyTransferTax,
+  )
 
   server
     .connect(transport)

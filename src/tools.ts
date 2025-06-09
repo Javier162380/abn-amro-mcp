@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+
 
 // Zod schemas for validation
 const InterestRateRequestSchema = z.object({
@@ -18,10 +20,18 @@ const InterestRateRequestSchema = z.object({
 
 const MaximumMortgageRequestSchema = z.object({
   mainIncome: z.number().min(0),
-  partnerIncome: z.number().min(0).optional(),
+  partnerIncome: z.number().min(0).optional()
 });
 
-export async function calculateInterestRate(args: z.infer<typeof InterestRateRequestSchema>) {
+const HouseTaxQuotaRequestSchema = z.object({
+  housePrice: z.number().min(0),
+});
+
+const MaxTransferTaxPremiumCap = 525000;
+const TransferTaxRate = 0.02;
+const MaxInterestRepaymentDeductionRate = 37.48;
+
+export async function calculateInterestRate(args: z.infer<typeof InterestRateRequestSchema>): Promise<CallToolResult> {
   try {
     const { product, type, discounts = [], inactive = false } = InterestRateRequestSchema.parse(args);
 
@@ -111,7 +121,7 @@ export async function calculateInterestRate(args: z.infer<typeof InterestRateReq
   }
 }
 
-export async function calculateMaximumMortgage(args: z.infer<typeof MaximumMortgageRequestSchema>) {
+export async function calculateMaximumMortgage(args: z.infer<typeof MaximumMortgageRequestSchema>): Promise<CallToolResult> {
   try {
     const { mainIncome, partnerIncome } = MaximumMortgageRequestSchema.parse(args);
 
@@ -169,3 +179,61 @@ export async function calculateMaximumMortgage(args: z.infer<typeof MaximumMortg
     };
   }
 }
+
+export function getMortageInterestRateDeduction(): CallToolResult {
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            success: true,
+            data: {
+              deductionPercentage:  MaxInterestRepaymentDeductionRate,
+              description: "Maximum tax deduction rate for mortgage interest payments in the Netherlands for 2025 (37.48% of interest paid can be deducted from taxable income)"
+            }
+          }, null, 2)
+        }
+      ]
+    };
+  }
+
+  export function getMaximumMortageNationalHomeGuarantee(): CallToolResult {
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            success: true,
+            data: {
+              deductionPercentage: 450000,
+              description: "Dutch National Mortgage Guarantee (NHG) limit for 2025: mortgages up to €450,000 qualify for lower NHG interest rates"
+            
+            }
+          }, null, 2)
+        }
+      ]
+    };
+  }
+
+  export function getPropertyTransferTax(args: z.infer<typeof HouseTaxQuotaRequestSchema>): CallToolResult {
+    const { housePrice } = HouseTaxQuotaRequestSchema.parse(args);
+    var taxQuota = 0;
+    if (housePrice > MaxTransferTaxPremiumCap) {
+        taxQuota = housePrice * TransferTaxRate;
+    }
+
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            success: true,
+            data: {
+                taxQuota: taxQuota,
+                description: "Dutch property transfer tax for 2025: 2% of the purchase price for properties above €525,000"
+            }
+          }, null, 2)
+        }
+      ]
+    };
+  }
