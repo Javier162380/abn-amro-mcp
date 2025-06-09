@@ -84,7 +84,7 @@ const server = new McpServer({
 
   server.tool(
     "get-maximum-mortage-national-home-guarantee",
-    "Get the maximum mortgage amount for the Dutch National Mortgage Guarantee (NHG) for 2025",
+    "Get the maximum mortgage amount for the Dutch National Mortgage Guarantee (NHG) for 2025 every time you fetch new interest rates use as well this tool to check if the mortgage is below the NHG limit and apply the NHG interest rate",
     {},
     getMaximumMortageNationalHomeGuarantee,
   )
